@@ -1,7 +1,9 @@
 import { Divider, Grid, Link } from "@material-ui/core";
 import { orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { request } from "../api";
 import Paper from "../components/Paper";
 
 const useStyles = makeStyles((theme) => ({
@@ -52,74 +54,88 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Hot({ hotNews }) {
+function Content({ hotNews, location }) {
   const classes = useStyles();
   const [papers, setPapers] = useState();
+  const params = useParams();
 
   const title = ["Thế giới", "Xã hội", "Kinh tế", "Thể thao"];
 
+  //
+  useEffect(() => {
+    let url = location.pathname.substring(1);
+    url = url === "" ? "news" : url;
+    if (params.paperName) url = `news/${params.paperName}`;
+    console.log("PATH ", url);
+
+    request("get", `${url}/0/10`, (res) => {
+      setPapers(res.data.content);
+    });
+  }, [location]);
+
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} justify="center">
       <Grid item className={classes.div1}>
         {hotNews ? <Paper lg paper={papers?.hot} /> : null}
         {papers ? (
           title.map((cate) => (
-            <>
+            <Fragment key={cate}>
               <Link href="#" className={classes.cate}>
                 {cate}
               </Link>
-              {Array(5)
-                .fill(0)
-                .map((ele, index) => (
-                  <>
-                    <Paper
-                      md
-                      title="Tổng Bí thư Nguyễn Phú Trọng điện đàm với Bí thư thứ nhất Đảng Cộng sản Cuba"
-                    />
-                    {index === 4 ? null : (
-                      <Divider
-                        variant="fullWidth"
-                        className={classes.divider}
-                      />
-                    )}
-                  </>
-                ))}
-            </>
+              {papers.map((p, index) => (
+                <Fragment key={p.id}>
+                  <Paper md paper={p} />
+                  {index === 4 ? null : (
+                    <Divider variant="fullWidth" className={classes.divider} />
+                  )}
+                </Fragment>
+              ))}
+            </Fragment>
           ))
-        ) : hotNews ? (
+        ) : // Loading screen.
+        hotNews ? (
           <div className={classes.mdWrapper}>
+            <Paper md />
             <Paper md />
           </div>
         ) : (
           Array(4)
             .fill(0)
-            .map((ele, index) => (
-              <>
+            .map((index) => (
+              <Fragment key={index}>
                 <Paper md />
                 <Divider variant="fullWidth" className={classes.divider} />
-              </>
+              </Fragment>
             ))
         )}
       </Grid>
+
+      {/* abc */}
       <Grid item className={classes.div}>
         {papers
-          ? null
-          : Array(5)
+          ? papers.map((p, index) => (
+              <Fragment key={p.id}>
+                {index === 0 ? null : (
+                  <Divider variant="fullWidth" className={classes.divider} />
+                )}
+                <Paper sm paper={p} />
+              </Fragment>
+            ))
+          : // Loading screen.
+            Array(5)
               .fill(0)
               .map((ele, index) => (
-                <>
+                <Fragment key={index}>
                   {index === 0 ? null : (
                     <Divider variant="fullWidth" className={classes.divider} />
                   )}
-                  <Paper
-                    sm
-                    title="Tổng Bí thư Nguyễn Phú Trọng điện đàm với Bí thư thứ nhất Đảng Cộng sản Cuba"
-                  />
-                </>
+                  <Paper sm />
+                </Fragment>
               ))}
       </Grid>
     </Grid>
   );
 }
 
-export default Hot;
+export default Content;
