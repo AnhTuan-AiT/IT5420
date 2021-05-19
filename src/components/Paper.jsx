@@ -9,7 +9,7 @@ import clsx from "clsx";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import dantri from "../assets/images/dan-tri.svg";
-import dspl from "../assets/images/ds&pl.svg";
+import dspl from "../assets/images/dspl.svg";
 import nhandan from "../assets/images/nhan-dan.png";
 import thanhnien from "../assets/images/thanh-nien.png";
 import tienphong from "../assets/images/tien-phong.png";
