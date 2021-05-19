@@ -1,5 +1,4 @@
 import Box from "@material-ui/core/Box";
-import { purple } from "@material-ui/core/colors";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
@@ -42,7 +41,7 @@ function a11yProps(index) {
 }
 
 const StyledTabs = withStyles({
-  root: { background: purple[700] },
+  root: { background: "#1a7900" },
   indicator: {
     display: "flex",
     justifyContent: "center",
@@ -80,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
 
 const tabs = [
   { label: "Nóng", path: "/" },
-  { label: "Mới", path: "/new" },
+  { label: "Mới", path: "/news" },
   { label: "Thế giới", path: "/world" },
   { label: "Xã hội", path: "/society" },
   { label: "Kinh tế", path: "/economy" },
