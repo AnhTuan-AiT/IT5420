@@ -7,8 +7,15 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Skeleton } from "@material-ui/lab";
 import clsx from "clsx";
 import React from "react";
-import { useHistory } from "react-router";
 import { Link as RouterLink } from "react-router-dom";
+import dantri from "../assets/images/dan-tri.svg";
+import dspl from "../assets/images/ds&pl.svg";
+import nhandan from "../assets/images/nhan-dan.png";
+import thanhnien from "../assets/images/thanh-nien.png";
+import tienphong from "../assets/images/tien-phong.png";
+import tuoitre from "../assets/images/tuoi-tre.png";
+import vnexpress from "../assets/images/vn-express.svg";
+import vnplus from "../assets/images/vn-plus.png";
 
 const useStyles = makeStyles({
   media: {
@@ -52,15 +59,46 @@ const useStyles = makeStyles({
       textDecoration: "none",
     },
   },
+  actions: { paddingLeft: 0 },
 });
 
-export default function Paper({ lg, sm, md, title, paper }) {
+export default function Paper({ lg, sm, md, paper }) {
   const classes = useStyles();
-  const history = useHistory();
+
+  let logo;
+
+  switch (paper?.newspaper) {
+    case "Nhân dân":
+      logo = nhandan;
+      break;
+    case "Dân trí":
+      logo = dantri;
+      break;
+    case "Đời sống và pháp luật":
+      logo = dspl;
+      break;
+    case "Vnexpress":
+      logo = vnexpress;
+      break;
+    case "Tiền phong":
+      logo = tienphong;
+      break;
+    case "Thanh niên":
+      logo = thanhnien;
+      break;
+    case "Viet Nam Plus":
+      logo = vnplus;
+      break;
+    case "Tuổi trẻ online":
+      logo = tuoitre;
+      break;
+    default:
+      logo = null;
+  }
 
   return (
     <Card elevation={0}>
-      <Grid md={12} container alignItems="flex-start">
+      <Grid container alignItems="flex-start">
         <Grid item md={lg ? 12 : 3}>
           {paper ? (
             <CardMedia
@@ -69,10 +107,8 @@ export default function Paper({ lg, sm, md, title, paper }) {
                 [classes.mdMedia]: md,
                 [classes.smMedia]: sm,
               })}
-              image={
-                "https://photo-baomoi.zadn.vn/w700_r16x9/2021_05_12_293_38814399/4240b26eac2c45721c3d.jpg"
-              }
-              title={title}
+              image={paper.imageLink}
+              title={paper.title}
             />
           ) : (
             <Skeleton
@@ -87,7 +123,7 @@ export default function Paper({ lg, sm, md, title, paper }) {
             />
           )}
         </Grid>
-        <Grid container md={lg ? 12 : 9}>
+        <Grid item md={lg ? 12 : 9}>
           <Grid item md={12}>
             <CardContent
               className={clsx(classes.titleWrapper, {
@@ -109,19 +145,24 @@ export default function Paper({ lg, sm, md, title, paper }) {
               </Typography>
             </CardContent>
           </Grid>
-          <Box display="flex" alignItems="center" pl={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            pl={2}
+            className={clsx({ [classes.actions]: lg })}
+          >
             {
               paper ? (
                 <>
                   <Link
                     component={RouterLink}
-                    to="/paper/abc"
+                    to={`/news/paper/${paper.newspaper}`}
                     className={classes.sourceIcon}
                   >
                     <img
                       className={classes.sourceIcon}
                       alt="source"
-                      src="https://photo-baomoi.zadn.vn/4e023e6de32e0a70533f.png"
+                      src={logo}
                     />
                   </Link>
                   <Typography
@@ -131,14 +172,16 @@ export default function Paper({ lg, sm, md, title, paper }) {
                   >
                     2 giờ
                   </Typography>
-                  <Link
-                    className={classes.relate}
-                    color="inherit"
-                    variant="body2"
-                    href="#"
-                  >
-                    {`78 liên quan`}
-                  </Link>
+                  {paper.similar?.length > 0 ? (
+                    <Link
+                      className={classes.relate}
+                      color="inherit"
+                      variant="body2"
+                      href="#"
+                    >
+                      {`${paper.similar.length} liên quan`}
+                    </Link>
+                  ) : null}
                 </>
               ) : null
               //   <Skeleton variant="rect" height={20} width={200} />
