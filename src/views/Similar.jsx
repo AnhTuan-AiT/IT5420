@@ -73,7 +73,6 @@ function SearchContent({ location }) {
       (res) => {
         let data = res.data;
 
-        if (params.paperName) data = data.content;
         setSearchResult(data);
       },
       { onError: () => setSearchResult([]) }
