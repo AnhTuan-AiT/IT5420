@@ -1,10 +1,12 @@
-import { Grid, Typography } from "@material-ui/core";
+import { Box, Grid, Typography } from "@material-ui/core";
 import { orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import request from "../api";
+import NegativeButton from "../components/NegativeButton";
 import Paper from "../components/Paper";
+import PositiveButton from "../components/PositiveButton";
 import { StyledDivider } from "../components/StyledDivider";
 
 const useStyles = makeStyles((theme) => ({
@@ -64,14 +66,32 @@ function SearchContent({ location }) {
   //
   const [searchResult, setSearchResult] = useState();
   const [news, setNews] = useState();
+  const [currPage, setCurrPage] = useState(0);
+  const [lastPage, setLastPage] = useState(false);
 
   //
+  const onViewNextPage = () => {
+    setCurrPage((currPage) => currPage + 1);
+  };
+
+  const onViewPreviousPage = () => {
+    setCurrPage((currPage) => currPage - 1);
+  };
+
   useEffect(() => {
+    let url = `news/search?text=${params.keyword}&offset=${currPage}&limit=50`;
+    if (params.paperName) {
+      url = `news/newspaper?newspaper=${params.paperName}&offset=${currPage}&limit=50`;
+    }
+
     request(
       "get",
-      `news/search?text=${params.keyword}`,
+      url,
       (res) => {
-        setSearchResult(res.data);
+        let data = res.data;
+
+        setLastPage(data.last);
+        setSearchResult(data.content);
       },
       { onError: () => setSearchResult([]) }
     );
@@ -84,7 +104,7 @@ function SearchContent({ location }) {
       },
       { onError: () => setNews([]) }
     );
-  }, [location]);
+  }, [location, currPage]);
 
   return (
     <Grid container spacing={2} justify="center">
@@ -133,6 +153,31 @@ function SearchContent({ location }) {
                 </Fragment>
               ))}
       </Grid>
+      {searchResult && lastPage ? null : (
+        <Box
+          display="flex"
+          justifyContent="center"
+          mr="auto"
+          width={625}
+          mt={3}
+          mb={3}
+        >
+          {currPage > 0 ? (
+            <NegativeButton
+              onClick={onViewPreviousPage}
+              style={{ maxWidth: 100, borderRadius: 6 }}
+            >
+              Quay lại
+            </NegativeButton>
+          ) : null}
+          <PositiveButton
+            onClick={onViewNextPage}
+            style={{ maxWidth: 100, borderRadius: 6, marginLeft: 12 }}
+          >
+            Xem thêm
+          </PositiveButton>
+        </Box>
+      )}
     </Grid>
   );
 }
