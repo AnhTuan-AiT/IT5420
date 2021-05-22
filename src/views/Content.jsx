@@ -1,10 +1,11 @@
-import { Divider, Grid, Link } from "@material-ui/core";
+import { Grid, Link } from "@material-ui/core";
 import { orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { request } from "../api";
+import request from "../api";
 import Paper from "../components/Paper";
+import { StyledDivider } from "../components/StyledDivider";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,11 +21,9 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 32,
     width: "100%",
   },
-  divider: {
-    margin: "12px 0px",
-  },
   cate: {
     position: "relative",
+    zIndex: -1,
     display: "inline-block",
     fontSize: 22,
     padding: "4px 12px 12px",
@@ -66,9 +65,8 @@ function Content({ hotNews, location }) {
     let url = location.pathname.substring(1);
     url = url === "" ? "news" : url;
     if (params.paperName) url = `news/${params.paperName}`;
-    console.log("PATH ", url);
 
-    request("get", `${url}/0/10`, (res) => {
+    request("get", `${url}?offset=0&limit=20`, (res) => {
       setPapers(res.data.content);
     });
   }, [location]);
@@ -86,17 +84,15 @@ function Content({ hotNews, location }) {
               {papers.map((p, index) => (
                 <Fragment key={p.id}>
                   <Paper md paper={p} />
-                  {index === 4 ? null : (
-                    <Divider variant="fullWidth" className={classes.divider} />
-                  )}
+                  {index === papers.length - 1 ? null : <StyledDivider />}
                 </Fragment>
               ))}
             </Fragment>
           ))
-        ) : // Loading screen.
-        hotNews ? (
+        ) : hotNews ? ( // Loading screen.
           <div className={classes.mdWrapper}>
             <Paper md />
+            <StyledDivider />
             <Paper md />
           </div>
         ) : (
@@ -105,7 +101,7 @@ function Content({ hotNews, location }) {
             .map((index) => (
               <Fragment key={index}>
                 <Paper md />
-                <Divider variant="fullWidth" className={classes.divider} />
+                <StyledDivider />
               </Fragment>
             ))
         )}
@@ -116,9 +112,7 @@ function Content({ hotNews, location }) {
         {papers
           ? papers.map((p, index) => (
               <Fragment key={p.id}>
-                {index === 0 ? null : (
-                  <Divider variant="fullWidth" className={classes.divider} />
-                )}
+                {index === 0 ? null : <StyledDivider />}
                 <Paper sm paper={p} />
               </Fragment>
             ))
@@ -127,9 +121,7 @@ function Content({ hotNews, location }) {
               .fill(0)
               .map((ele, index) => (
                 <Fragment key={index}>
-                  {index === 0 ? null : (
-                    <Divider variant="fullWidth" className={classes.divider} />
-                  )}
+                  {index === 0 ? null : <StyledDivider />}
                   <Paper sm />
                 </Fragment>
               ))}
