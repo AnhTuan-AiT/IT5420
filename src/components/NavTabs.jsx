@@ -78,10 +78,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const tabs = [
-  { label: "Nóng", path: "/" },
-  { label: "Mới", path: "/news" },
+  { label: "Mới", path: "/" },
   { label: "Thế giới", path: "/world" },
-  { label: "Xã hội", path: "/society" },
+  { label: "Giải trí", path: "/entertainment" },
+  { label: "Giáo dục", path: "/education" },
   { label: "Kinh tế", path: "/economy" },
   { label: "Thể thao", path: "/sport" },
 ];
