@@ -45,21 +45,27 @@ const useStyles = makeStyles({
   },
   titleText: {
     fontWeight: 500,
-  },
-  sourceIcon: {
-    height: 16,
-  },
-  time: {
-    marginLeft: 12,
-  },
-  relate: {
-    marginLeft: 12,
     "&:hover": {
       color: blue[500],
       textDecoration: "none",
     },
   },
+  sourceIcon: {
+    height: 16,
+    paddingTop: 1,
+  },
+  time: {
+    marginLeft: 12,
+  },
+  relate: {
+    "&:hover": {
+      color: blue[500],
+      textDecoration: "none",
+    },
+  },
+  smRelate: { marginLeft: 12 },
   actions: { paddingLeft: 0 },
+  smTime: { flexDirection: "column" },
 });
 
 export default function Paper({ lg, sm, md, paper }) {
@@ -80,10 +86,10 @@ export default function Paper({ lg, sm, md, paper }) {
     case "Vnexpress":
       logo = vnexpress;
       break;
-    case "Tiền phong":
+    case "Tiên phong":
       logo = tienphong;
       break;
-    case "Thanh niên":
+    case "thanh nien":
       logo = thanhnien;
       break;
     case "Viet Nam Plus":
@@ -95,6 +101,16 @@ export default function Paper({ lg, sm, md, paper }) {
     default:
       logo = null;
   }
+
+  const formatTime = (totalSecond, date) => {
+    const hour = Math.floor(totalSecond / 3600);
+    const minute = Math.floor((totalSecond % 3600) / 60);
+    const d = new Date(date);
+
+    return `${d.getDate()} tháng ${d.getMonth()} lúc ${
+      hour < 10 ? `0${hour}` : hour
+    }:${minute < 10 ? `0${minute}` : minute}`;
+  };
 
   return (
     <Card elevation={0}>
@@ -131,61 +147,70 @@ export default function Paper({ lg, sm, md, paper }) {
                 [classes.lgTitleWrapper]: lg,
               })}
             >
-              <Typography
-                variant={lg && "h4"}
-                className={clsx(classes.titleText, {
-                  [classes.mdTitle]: md,
-                })}
-              >
-                {paper ? (
-                  paper.title
-                ) : (
+              {paper ? (
+                <Link
+                  variant={lg && "h4"}
+                  color="inherit"
+                  href={paper.newspaperLink}
+                  target="_blank"
+                  rel="noopener noreferer"
+                  className={clsx(classes.titleText, {
+                    [classes.mdTitle]: md,
+                  })}
+                >
+                  {paper.title}
+                </Link>
+              ) : (
+                <Typography
+                  variant={lg && "h4"}
+                  className={clsx(classes.titleText, {
+                    [classes.mdTitle]: md,
+                  })}
+                >
                   <Skeleton animation="wave" variant="rect" width="100%" />
-                )}
-              </Typography>
+                </Typography>
+              )}
             </CardContent>
           </Grid>
           <Box
             display="flex"
-            alignItems="center"
+            alignItems="flex-start"
             pl={2}
             className={clsx({ [classes.actions]: lg })}
           >
-            {
-              paper ? (
-                <>
-                  <Link
-                    component={RouterLink}
-                    to={`/news/paper/${paper.newspaper}`}
-                    className={classes.sourceIcon}
-                  >
-                    <img
-                      className={classes.sourceIcon}
-                      alt="source"
-                      src={logo}
-                    />
-                  </Link>
-                  <Typography
-                    variant="body2"
-                    component="span"
-                    className={classes.time}
-                  >
-                    2 giờ
+            {paper ? (
+              <>
+                <Link
+                  component={RouterLink}
+                  to={`/news/paper/${paper.newspaper}`}
+                  className={classes.sourceIcon}
+                >
+                  <img className={classes.sourceIcon} alt="source" src={logo} />
+                </Link>
+                <Box
+                  display="flex"
+                  className={clsx(classes.time, { [classes.smTime]: sm })}
+                >
+                  <Typography variant="body2" component="span">
+                    {formatTime(paper.totalSecond, paper.date)}
                   </Typography>
+
                   {paper.similar?.length > 0 ? (
                     <Link
-                      className={classes.relate}
+                      component={RouterLink}
+                      to={`/relevant/${paper.id}`}
+                      className={clsx(classes.relate, {
+                        [classes.smRelate]: !sm,
+                      })}
                       color="inherit"
                       variant="body2"
-                      href="#"
                     >
                       {`${paper.similar.length} liên quan`}
                     </Link>
                   ) : null}
-                </>
-              ) : null
-              //   <Skeleton variant="rect" height={20} width={200} />
-            }
+                </Box>
+              </>
+            ) : null}
           </Box>
         </Grid>
       </Grid>
