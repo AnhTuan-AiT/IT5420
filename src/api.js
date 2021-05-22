@@ -6,13 +6,13 @@ const isFunction = (func) =>
     "function" === typeof func ||
     func instanceof Function);
 
-export const request = async (
+export default async function request(
   method,
   url,
   successHandler,
   errorHandlers = {},
   data
-) => {
+) {
   try {
     const res = await axios({
       baseURL: process.env.REACT_APP_API_ENDPOINT,
@@ -83,4 +83,4 @@ export const request = async (
     }
     console.log("Request config", e.config);
   }
-};
+}
