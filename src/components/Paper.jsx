@@ -64,8 +64,19 @@ const useStyles = makeStyles({
     },
   },
   smRelate: { marginLeft: 12 },
-  actions: { paddingLeft: 0 },
+  lgActions: { paddingLeft: 0 },
+  smActions: { paddingTop: 0 },
   smTime: { flexDirection: "column" },
+  description: {
+    display: "-webkit-box",
+    "-webkit-box-orient": "vertical",
+    "-webkit-line-clamp": 2 /* number of lines to show */,
+    lineHeight: "24px",
+    maxHeight: 48,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    width: "100%",
+  },
 });
 
 export default function Paper({ lg, sm, md, paper }) {
@@ -159,6 +170,11 @@ export default function Paper({ lg, sm, md, paper }) {
                   })}
                 >
                   {paper.title}
+                  {sm ? null : (
+                    <Typography className={classes.description}>
+                      {paper.description}
+                    </Typography>
+                  )}
                 </Link>
               ) : (
                 <Typography
@@ -176,7 +192,11 @@ export default function Paper({ lg, sm, md, paper }) {
             display="flex"
             alignItems="flex-start"
             pl={2}
-            className={clsx({ [classes.actions]: lg })}
+            pt={1}
+            className={clsx({
+              [classes.lgActions]: lg,
+              [classes.smActions]: sm,
+            })}
           >
             {paper ? (
               <>
