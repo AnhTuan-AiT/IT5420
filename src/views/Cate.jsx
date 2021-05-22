@@ -1,26 +1,26 @@
-import { Divider, Grid } from "@material-ui/core";
+import { Box, Grid } from "@material-ui/core";
 import { orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { Fragment, useEffect, useState } from "react";
-import { request } from "../api";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import request from "../api";
+import NegativeButton from "../components/NegativeButton";
 import Paper from "../components/Paper";
+import PositiveButton from "../components/PositiveButton";
+import { StyledDivider } from "../components/StyledDivider";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
-  div: {
+  secondaryContent: {
     maxWidth: 330,
     width: "100%",
   },
-  div1: {
+  primaryContent: {
     maxWidth: 625,
     paddingBottom: 32,
     width: "100%",
-  },
-  divider: {
-    margin: "12px 0px",
   },
   cate: {
     position: "relative",
@@ -53,32 +53,99 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CateContent({ location }) {
+function CateContent({ hotNews, location }) {
   const classes = useStyles();
-  const [papers, setPapers] = useState();
-  const hotNews = true;
 
   //
+  const [papers, setPapers] = useState();
+  const [news, setNews] = useState();
+  const [currPage, setCurrPage] = useState(0);
+  const [lastPage, setLastPage] = useState(false);
+
+  //
+  const prevPathRef = useRef();
+
+  //
+  const onViewNextPage = () => {
+    setCurrPage((currPage) => currPage + 1);
+    setPapers();
+  };
+
+  const onViewPreviousPage = () => {
+    setCurrPage((currPage) => currPage - 1);
+    setPapers();
+  };
+
   useEffect(() => {
-    let url = location.pathname.substring(1);
-    url = "news";
+    prevPathRef.current = location.pathname;
+  });
 
-    request("get", `${url}/0/10`, (res) => {
-      const data = res.data.content;
-      const hot = data[0];
-      data.shift();
+  const prevPathname = prevPathRef.current;
 
-      setPapers({ hot: hot, mdList: data });
-    });
-  }, [location]);
+  useEffect(() => {
+    let offset = currPage;
+    let cate = location.pathname.substring(1);
+
+    if (prevPathname !== location.pathname) {
+      offset = 0;
+      setCurrPage(0);
+      setPapers();
+    }
+
+    switch (cate) {
+      case "world":
+        cate = "Thế giới";
+        break;
+      case "entertainment":
+        cate = "Giải trí";
+        break;
+      case "education":
+        cate = "Giáo dục";
+        break;
+      case "economy":
+        cate = "Kinh tế";
+        break;
+      case "sport":
+        cate = "Thể thao";
+        break;
+    }
+
+    request(
+      "get",
+      `news/category?category=${cate}&offset=${offset}&limit=50`,
+      (res) => {
+        const data = res.data;
+
+        if (currPage === 0) {
+          const hot = data.content[0];
+          data.content.shift();
+
+          setLastPage(data.last);
+          setPapers({ hot: hot, mdList: data.content });
+        } else {
+          setPapers({ mdList: data.content });
+        }
+      },
+      { onError: () => setPapers({ mdList: [] }) }
+    );
+
+    request(
+      "get",
+      `news?offset=0&limit=10`,
+      (res) => {
+        setNews(res.data.content);
+      },
+      { onError: () => setNews([]) }
+    );
+  }, [location, currPage]);
 
   return (
     <Grid container spacing={2} justify="center">
-      <Grid item className={classes.div1}>
-        {hotNews ? (
+      <Grid item className={classes.primaryContent}>
+        {hotNews && currPage === 0 ? (
           <>
             <Paper lg paper={papers?.hot} />
-            <Divider variant="fullWidth" className={classes.divider} />
+            {papers ? <StyledDivider /> : null}
           </>
         ) : null}
 
@@ -87,35 +154,33 @@ function CateContent({ location }) {
           papers.mdList.map((p, index) => (
             <Fragment key={p.id}>
               <Paper md paper={p} />
-              {index === papers.mdList.length - 1 ? null : (
-                <Divider variant="fullWidth" className={classes.divider} />
-              )}
+              {index === papers.mdList.length - 1 ? null : <StyledDivider />}
             </Fragment>
           ))
-        ) : hotNews ? ( // Loading screen.
+        ) : hotNews && currPage === 0 ? ( // Loading screen.
           <div className={classes.mdWrapper}>
+            <Paper md />
+            <StyledDivider />
             <Paper md />
           </div>
         ) : (
           Array(4)
             .fill(0)
-            .map((index) => (
+            .map((ele, index) => (
               <Fragment key={index}>
                 <Paper md />
-                <Divider variant="fullWidth" className={classes.divider} />
+                <StyledDivider />
               </Fragment>
             ))
         )}
       </Grid>
 
-      {/* abc */}
-      <Grid item className={classes.div}>
-        {papers
-          ? papers.mdList.map((p, index) => (
+      {/* News */}
+      <Grid item className={classes.secondaryContent}>
+        {news
+          ? news.map((p, index) => (
               <Fragment key={p.id}>
-                {index === 0 ? null : (
-                  <Divider variant="fullWidth" className={classes.divider} />
-                )}
+                {index === 0 ? null : <StyledDivider />}
                 <Paper sm paper={p} />
               </Fragment>
             ))
@@ -124,13 +189,38 @@ function CateContent({ location }) {
               .fill(0)
               .map((ele, index) => (
                 <Fragment key={index}>
-                  {index === 0 ? null : (
-                    <Divider variant="fullWidth" className={classes.divider} />
-                  )}
+                  {index === 0 ? null : <StyledDivider />}
                   <Paper sm />
                 </Fragment>
               ))}
       </Grid>
+      {papers ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          mr="auto"
+          width={625}
+          mt={3}
+          mb={3}
+        >
+          {currPage > 0 ? (
+            <NegativeButton
+              onClick={onViewPreviousPage}
+              style={{ maxWidth: 100, borderRadius: 6 }}
+            >
+              Quay lại
+            </NegativeButton>
+          ) : null}
+          {lastPage ? null : (
+            <PositiveButton
+              onClick={onViewNextPage}
+              style={{ maxWidth: 100, borderRadius: 6, marginLeft: 12 }}
+            >
+              Xem thêm
+            </PositiveButton>
+          )}
+        </Box>
+      ) : null}
     </Grid>
   );
 }
