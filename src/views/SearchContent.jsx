@@ -72,10 +72,12 @@ function SearchContent({ location }) {
   //
   const onViewNextPage = () => {
     setCurrPage((currPage) => currPage + 1);
+    setSearchResult();
   };
 
   const onViewPreviousPage = () => {
     setCurrPage((currPage) => currPage - 1);
+    setSearchResult();
   };
 
   useEffect(() => {
@@ -153,7 +155,7 @@ function SearchContent({ location }) {
                 </Fragment>
               ))}
       </Grid>
-      {searchResult && lastPage ? null : (
+      {searchResult ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -170,14 +172,16 @@ function SearchContent({ location }) {
               Quay lại
             </NegativeButton>
           ) : null}
-          <PositiveButton
-            onClick={onViewNextPage}
-            style={{ maxWidth: 100, borderRadius: 6, marginLeft: 12 }}
-          >
-            Xem thêm
-          </PositiveButton>
+          {lastPage ? null : (
+            <PositiveButton
+              onClick={onViewNextPage}
+              style={{ maxWidth: 100, borderRadius: 6, marginLeft: 12 }}
+            >
+              Xem thêm
+            </PositiveButton>
+          )}
         </Box>
-      )}
+      ) : null}
     </Grid>
   );
 }
