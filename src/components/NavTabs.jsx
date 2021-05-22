@@ -94,13 +94,29 @@ export default function NavTabs() {
   // const ref = useRef();
 
   //
+  window.onscroll = function () {
+    var nav = document.getElementById("nav");
+
+    if (window.pageYOffset > 80) {
+      nav.style.position = "fixed";
+      nav.style.width = "100%";
+      nav.style.background = "rgba( 255, 255, 255, 0.25 )";
+      nav.style.backdropFilter = "blur( 4px )";
+    } else {
+      nav.style.position = null;
+      nav.style.width = null;
+      nav.style.background = null;
+      nav.style.backdropFilter = null;
+    }
+  };
+
   useEffect(() => {
     // Fixed bug: indicator not show in the first load.
     window.dispatchEvent(new CustomEvent("resize"));
   }, [location.pathname]);
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} id="nav">
       <StyledTabs value={location.pathname} aria-label="styled tabs example">
         {tabs.map((tab, index) => (
           <LinkTab
