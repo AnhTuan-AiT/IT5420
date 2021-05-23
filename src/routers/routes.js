@@ -1,7 +1,7 @@
 import React, { lazy } from "react";
 import { Redirect, Route, Switch } from "react-router";
 
-const Content = lazy(() => import("../views/Content"));
+const Home = lazy(() => import("../views/Home"));
 const CateContent = lazy(() => import("../views/Cate"));
 const SearchContent = lazy(() => import("../views/SearchContent"));
 const Similar = lazy(() => import("../views/Similar"));
@@ -9,11 +9,7 @@ const Similar = lazy(() => import("../views/Similar"));
 function Routes() {
   return (
     <Switch>
-      <Route
-        render={(props) => <Content {...props} hotNews />}
-        path="/"
-        exact
-      />
+      <Route render={(props) => <Home {...props} hotNews />} path="/" exact />
 
       <Route
         render={(props) => <CateContent {...props} hotNews />}

@@ -74,17 +74,20 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
+    zIndex: 10,
   },
 }));
 
-const tabs = [
-  { label: "Mới", path: "/" },
-  { label: "Thế giới", path: "/world" },
-  { label: "Giải trí", path: "/entertainment" },
-  { label: "Giáo dục", path: "/education" },
-  { label: "Kinh tế", path: "/economy" },
-  { label: "Thể thao", path: "/sport" },
-];
+export const tabs = {
+  Mới: "/",
+  "Thế giới": "/world",
+  "Kinh tế": "/economy",
+  "Giáo dục": "/education",
+  "Giải trí": "/entertainment",
+  "Thể thao": "/sport",
+};
+
+const arrTabs = Object.entries(tabs);
 
 export default function NavTabs() {
   const classes = useStyles();
@@ -95,18 +98,22 @@ export default function NavTabs() {
 
   //
   window.onscroll = function () {
-    var nav = document.getElementById("nav");
+    const nav = document.getElementById("nav");
 
     if (window.pageYOffset > 80) {
-      nav.style.position = "fixed";
-      nav.style.width = "100%";
-      nav.style.background = "rgba( 255, 255, 255, 0.25 )";
-      nav.style.backdropFilter = "blur( 4px )";
+      if (nav) {
+        nav.style.position = "fixed";
+        nav.style.width = "100%";
+        nav.style.background = "rgba( 255, 255, 255, 0.25 )";
+        nav.style.backdropFilter = "blur( 4px )";
+      }
     } else {
-      nav.style.position = null;
-      nav.style.width = null;
-      nav.style.background = null;
-      nav.style.backdropFilter = null;
+      if (nav) {
+        nav.style.position = null;
+        nav.style.width = null;
+        nav.style.background = null;
+        nav.style.backdropFilter = null;
+      }
     }
   };
 
@@ -118,13 +125,13 @@ export default function NavTabs() {
   return (
     <div className={classes.root} id="nav">
       <StyledTabs value={location.pathname} aria-label="styled tabs example">
-        {tabs.map((tab, index) => (
+        {arrTabs.map((tab, index) => (
           <LinkTab
-            key={tab.path}
+            key={tab[1]}
             classes={{ root: classes.tabRoot, selected: classes.tabSelected }}
-            label={tab.label}
-            to={tab.path}
-            value={tab.path}
+            label={tab[0]}
+            to={tab[1]}
+            value={tab[1]}
             {...a11yProps(index)}
           />
         ))}
