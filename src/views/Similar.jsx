@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import request from "../api";
+import News from "../components/News";
 import Paper from "../components/Paper";
 import { StyledDivider } from "../components/StyledDivider";
 
@@ -117,24 +118,7 @@ function SearchContent({ location }) {
       </Grid>
 
       {/* News */}
-      <Grid item className={classes.secondaryContent}>
-        {news
-          ? news.map((p, index) => (
-              <Fragment key={p.id}>
-                {index === 0 ? null : <StyledDivider />}
-                <Paper sm paper={p} />
-              </Fragment>
-            ))
-          : // Loading screen.
-            Array(5)
-              .fill(0)
-              .map((ele, index) => (
-                <Fragment key={index}>
-                  {index === 0 ? null : <StyledDivider />}
-                  <Paper sm />
-                </Fragment>
-              ))}
-      </Grid>
+      <News news={news} />
     </Grid>
   );
 }

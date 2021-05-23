@@ -1,11 +1,11 @@
-import { Box, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { orange } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import request from "../api";
-import NegativeButton from "../components/NegativeButton";
+import News from "../components/News";
+import Pagination from "../components/Pagination";
 import Paper from "../components/Paper";
-import PositiveButton from "../components/PositiveButton";
 import { StyledDivider } from "../components/StyledDivider";
 
 const useStyles = makeStyles((theme) => ({
@@ -90,6 +90,7 @@ function CateContent({ hotNews, location }) {
       offset = 0;
       setCurrPage(0);
       setPapers();
+      setNews();
     }
 
     switch (cate) {
@@ -176,51 +177,17 @@ function CateContent({ hotNews, location }) {
       </Grid>
 
       {/* News */}
-      <Grid item className={classes.secondaryContent}>
-        {news
-          ? news.map((p, index) => (
-              <Fragment key={p.id}>
-                {index === 0 ? null : <StyledDivider />}
-                <Paper sm paper={p} />
-              </Fragment>
-            ))
-          : // Loading screen.
-            Array(5)
-              .fill(0)
-              .map((ele, index) => (
-                <Fragment key={index}>
-                  {index === 0 ? null : <StyledDivider />}
-                  <Paper sm />
-                </Fragment>
-              ))}
-      </Grid>
-      {papers ? (
-        <Box
-          display="flex"
-          justifyContent="center"
-          mr="auto"
-          width={625}
-          mt={3}
-          mb={3}
-        >
-          {currPage > 0 ? (
-            <NegativeButton
-              onClick={onViewPreviousPage}
-              style={{ maxWidth: 100, borderRadius: 6 }}
-            >
-              Quay lại
-            </NegativeButton>
-          ) : null}
-          {lastPage ? null : (
-            <PositiveButton
-              onClick={onViewNextPage}
-              style={{ maxWidth: 100, borderRadius: 6, marginLeft: 12 }}
-            >
-              Xem thêm
-            </PositiveButton>
-          )}
-        </Box>
-      ) : null}
+      <News news={news} />
+
+      {/* Pagination */}
+      <Pagination
+        show={papers}
+        currPage={currPage}
+        lastPage={lastPage}
+        onPreviousPage={onViewPreviousPage}
+        onNextPage={onViewNextPage}
+      />
+      {/* papers ? */}
     </Grid>
   );
 }
