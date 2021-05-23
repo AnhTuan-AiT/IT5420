@@ -84,3 +84,37 @@ export default async function request(
     console.log("Request config", e.config);
   }
 }
+
+export async function paralelRequest(requests, successHandler) {
+  try {
+    Promise.all(requests).then((responses) => {
+      if (isFunction(successHandler)) {
+        successHandler(responses);
+      }
+    });
+  } catch (e) {
+    if (e.response) {
+      // The request was made and the server responded with a status code that falls out of the range of 2xx.
+      console.log(
+        "The request was made and the server responded with a status code that falls out of the range of 2xx",
+        e
+      );
+    } else if (e.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(
+        "The request was made but no response was received",
+        e.request
+      );
+    } else {
+      // Something happened in setting up the request that triggered an Error.
+      console.log(
+        "Something happened in setting up the request that triggered an Error",
+        e.message
+      );
+    }
+
+    console.log("Request config", e.config);
+  }
+}
