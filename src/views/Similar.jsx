@@ -95,7 +95,7 @@ function SearchContent({ location }) {
         {searchResult ? (
           searchResult.length > 0 ? (
             searchResult.map((p, index) => (
-              <Fragment key={p.id}>
+              <Fragment key={p?.id}>
                 <Paper md paper={p} />
                 {index === searchResult.length - 1 ? null : <StyledDivider />}
               </Fragment>
