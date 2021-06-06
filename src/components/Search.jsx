@@ -30,7 +30,8 @@ export default function Search() {
   const [value, setValue] = useState("");
 
   //
-  const onSearch = () => {
+  const onSearch = (e) => {
+    e.preventDefault();
     history.push(`/search/${value}`);
   };
   const onTextChange = (e) => {
@@ -38,7 +39,7 @@ export default function Search() {
   };
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} component="form" onSubmit={onSearch}>
       <InputBase
         value={value}
         onChange={onTextChange}
@@ -47,9 +48,9 @@ export default function Search() {
         inputProps={{ "aria-label": "search" }}
       />
       <IconButton
-        onClick={onSearch}
         className={classes.iconButton}
         aria-label="search"
+        type="submit"
       >
         <SearchIcon />
       </IconButton>
