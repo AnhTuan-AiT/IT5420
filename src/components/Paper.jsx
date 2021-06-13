@@ -4,7 +4,6 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import { blue } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";
-import { SaveOutlined } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import clsx from "clsx";
 import React from "react";
@@ -118,10 +117,10 @@ export default function Paper({ lg, sm, md, paper }) {
     const hour = Math.floor(totalSecond / 3600);
     const minute = Math.floor((totalSecond % 3600) / 60);
     const d = new Date(date);
-    
-    d.setMonth(d.getMonth() + 1)
 
-    return `${d.getDate()} tháng ${d.getMonth()} lúc ${
+    // d.setMonth(d.getMonth() + 1)
+
+    return `${d.getDate()} tháng ${d.getMonth() + 1} lúc ${
       hour < 10 ? `0${hour}` : hour
     }:${minute < 10 ? `0${minute}` : minute}`;
   };
